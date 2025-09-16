@@ -8,14 +8,14 @@ from livekit.plugins import (
     azure,
     google
 )
+from livekit.agents import mcp
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 load_dotenv(".env")
 
 class Assistant(Agent):
     def __init__(self) -> None:
-        super().__init__(instructions="You are a helpful voice AI assistant.")
-
+        super().__init__(instructions="You are an arabic voice AI assistant.")
 
 async def entrypoint(ctx: agents.JobContext):
     session = AgentSession(
@@ -31,6 +31,7 @@ async def entrypoint(ctx: agents.JobContext):
         ),
         vad=silero.VAD.load(),
         turn_detection=MultilingualModel(),
+        mcp_servers=[mcp.MCPServerHTTP("http://127.0.0.1:8000/mcp/")]
     )
 
     await session.start(
