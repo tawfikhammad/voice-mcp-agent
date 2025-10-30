@@ -1,10 +1,14 @@
+import pandas as pd
+import difflib
+
+FAQ_PATH = "faq_arabic.csv" 
+faq_df = pd.read_csv(FAQ_PATH)
+
 def faq_assistant(question: str) -> str:
-    """Provide answers to frequently asked questions."""
-    faq_db = {
-        "What is your return policy?": "Our return policy allows returns within 30 days of purchase with a valid receipt.",
-        "How can I track my order?": "You can track your order using the tracking link sent to your email after shipping.",
-        "Do you offer international shipping?": "Yes, we offer international shipping to select countries. Please check our shipping policy for more details.",
-        "What payment methods do you accept?": "We accept Visa, MasterCard, PayPal, and Apple Pay.",
-        "How can I contact customer support?": "You can contact our customer support via email at support@example.com."
-    }
-    return faq_db.get(question, "Sorry, I don't have an answer for that.")
+    questions = faq_df["السؤال"].tolist()
+    best_match = difflib.get_close_matches(question, questions, n=1, cutoff=0.5)
+    if best_match:
+        answer = faq_df.loc[faq_df["السؤال"] == best_match[0], "الإجابة"].values[0]
+        return f"الإجابة: {answer}"
+    else:
+        return "عذرًا، لم أتمكن من العثور على إجابة لهذا السؤال."
